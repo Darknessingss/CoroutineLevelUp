@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class AbilityScriptsUI : MonoBehaviour
 {
@@ -18,117 +19,76 @@ public class AbilityScriptsUI : MonoBehaviour
 
     [Header("SettingsObject")]
     [SerializeField] private GameObject Player;
-
     private Color DefaultColorPlayer;
     [SerializeField] private Renderer PlayerRender;
-    private Coroutine changeColorCoroutine;
+    private Coroutine ChangeColorCoroutine;
 
-    public static class Ability1Spell
-    {
-        public static event Action<int> ChangeColorPlayer;
-    }
+    [Header("Ability1")]
+    public float TimerDurationChange = 1f;
+    public float DurationCoroutineAbility1 = 5f;
+    public Color CustomColor = Color.blue;
 
-    private void Awake()
-    {
-        if (PlayerRender != null)
-        {
-            DefaultColorPlayer = PlayerRender.material.color;
-        }
+    [Header("Couldown")]
+    private bool OnCouldown = false;
+    private float CurrentCouldown = 0f;
 
-        Ability1Spell.ChangeColorPlayer += ChangePlayerMaterial;
-    }
+    #region ButtonAbility1
 
-    private void Start()
+
+    void Start()
     {
         if (Ability1 != null)
         {
-            Ability1.onClick.AddListener(CastAbility1);
+            Ability1.onClick.AddListener(OnClickAbility1);
         }
-    }
-
-    private void OnDestroy()
-    {
-        Ability1Spell.ChangeColorPlayer -= ChangePlayerMaterial;
-
-        if (changeColorCoroutine != null)
+        else
         {
-            StopCoroutine(changeColorCoroutine);
-        }
-    }
-
-    private void ChangePlayerMaterial(int duration)
-    {
-    }
-
-    public void CastAbility1()
-    {
-        StartCoroutine(Ability1CooldownRoutine());
-        StartColorChangeCoroutine();
-    }
-
-    private IEnumerator Ability1CooldownRoutine()
-    {
-        Ability1.interactable = false;
-
-        float cooldownTime = TimerAbility;
-
-        while (cooldownTime > 0)
-        {
-            if (TextCouldown != null)
-            {
-                TextCouldown.text = cooldownTime.ToString("F1");
-            }
-
-            if (Icon != null)
-            {
-                Color iconColor = Icon.color;
-                iconColor.a = 0.5f;
-                Icon.color = iconColor;
-            }
-
-            cooldownTime -= Time.deltaTime;
-            yield return null;
+            Debug.LogError("Ability1 не назначена в инспекторе!");
         }
 
-        Ability1.interactable = true;
+        ButtonOverlay();
+    }
+
+    void Update()
+    {
+        
+    }
+
+    void ButtonOverlay()
+    {
+        if (Icon != null)
+            Icon.gameObject.SetActive(false);
 
         if (TextCouldown != null)
-        {
-            TextCouldown.text = "";
-        }
-
-        if (Icon != null)
-        {
-            Color iconColor = Icon.color;
-            iconColor.a = 1f;
-            Icon.color = iconColor;
-        }
+            TextCouldown.gameObject.SetActive(false);
     }
 
-    private void StartColorChangeCoroutine()
+    public void OnClickAbility1()
     {
-        if (changeColorCoroutine != null)
+        if (ChangeColorCoroutine != null)
         {
-            StopCoroutine(changeColorCoroutine);
+            Debug.Log("Корутина уже запущена!");
+            return;
         }
 
-        changeColorCoroutine = StartCoroutine(ChangeColorRoutine());
+        Debug.Log("Запускаем корутину");
+        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial());
     }
 
-    private IEnumerator ChangeColorRoutine()
+    private IEnumerator ColorChangerMaterial()
     {
-        if (PlayerRender == null) yield break;
+        Debug.Log("Начата корутина");
 
-        Color currentColor = PlayerRender.material.color;
+        Color originalColor = PlayerRender.material.color;
 
-        PlayerRender.material.color = Color.red;
-        Debug.Log("Color changed to RED");
+        PlayerRender.material.color = CustomColor;
 
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(DurationCoroutineAbility1);
 
-        PlayerRender.material.color = DefaultColorPlayer;
-        Debug.Log("Color returned to default");
+        PlayerRender.material.color = originalColor;
 
-        changeColorCoroutine = null;
+        ChangeColorCoroutine = null;
+        Debug.Log("Корутина завершена");
     }
+    #endregion ButtonAbility1
 }

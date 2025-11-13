@@ -28,25 +28,28 @@ public class AbilityScriptsUI : MonoBehaviour
     [SerializeField] private GameObject Player;
     [SerializeField] private Renderer PlayerRender;
     private Coroutine ChangeColorCoroutine;
+    private Coroutine ChangeColorCoroutineBlack;
+    private Coroutine ChangeColorCoroutineWhite;
 
     [Header("Ability1")]
     public float TimerDurationChange = 1f;
     public float DurationCoroutineAbility1 = 5f;
-    public Color CustomColor1 = Color.blue;
-    public Color CustomColor2 = Color.black;
-    public Color CustomColor3 = Color.white;
     public float DurationCoroutineAbility2 = 15f;
+    public float DurationCoroutineAbility3 = 25f;
+    public Color CustomColor1 = Color.blue;
+    public Color CustomColor2 = Color.green;
+    public Color CustomColor3 = Color.white;
+
 
 
 
     [Header("Couldown")]
-    private bool OnCouldown = false;
+    private bool OnCouldown1 = false;
+    private bool OnCouldown2 = false;
+    private bool OnCouldown3 = false;
     private float CurrentCouldown1 = 0f;
     private float CurrentCouldown2 = 0f;
     private float CurrentCouldown3 = 0f;
-
-    //private bool[] onCouldown = new bool[3];
-    //private float[] currentCouldown = new float[3];
 
     #endregion Settings
 
@@ -54,29 +57,15 @@ public class AbilityScriptsUI : MonoBehaviour
 
     void Start()
     {
-        if (Ability1 != null)
-            Ability1.onClick.AddListener(OnClickAbility1);
-        else
-            Debug.LogError("Ability1 не назначена в инспекторе!");
 
-        if (Ability2 != null)
-            Ability2.onClick.AddListener(OnClickAbility2);
-        else
-            Debug.LogError("Ability2 не назначена в инспекторе!");
-
-        if (Ability3 != null)
-            Ability3.onClick.AddListener(OnClickAbility3);
-        else
-            Debug.LogError("Ability3 не назначена в инспекторе!");
-
-        if (IconAbility3 != null)
-            IconAbility3.gameObject.SetActive(false);
+        if (IconAbility1 != null)
+            IconAbility1.gameObject.SetActive(false);
 
         if (IconAbility2 != null)
             IconAbility2.gameObject.SetActive(false);
 
-        if (IconAbility1 != null)
-            IconAbility1.gameObject.SetActive(false);
+        if (IconAbility3 != null)
+            IconAbility3.gameObject.SetActive(false);
 
         if (TextCouldown1 != null)
             TextCouldown1.gameObject.SetActive(false);
@@ -87,157 +76,81 @@ public class AbilityScriptsUI : MonoBehaviour
         if (TextCouldown3 != null)
             TextCouldown3.gameObject.SetActive(false);
 
-        //SetAbilityUI(false, 0);
-        //SetAbilityUI(false, 1);
-        //SetAbilityUI(false, 2);
-
     }
 
     void Update()
     {
-        //for(int i = 0; i < 3 ; i++)
-        //    if (OnCouldown[i])
-        //    {
-        //        CurrentColdown[i] -= Time.deltaTime;
-        //        UpdateCouldownUI();
-        //    }
-        //if (CurrentCouldown1[i])
-        //{
-        //    EndCouldown(i);
-        //}
-
-        if (OnCouldown)
+        if (OnCouldown1)
         {
             CurrentCouldown1 -= Time.deltaTime;
             UpdateCouldownUI();
         }
         if (CurrentCouldown1 <= 0f)
         {
-            EndCouldown();
+            EndCouldown1();
         }
 
-        if (OnCouldown)
+        if (OnCouldown2)
         {
             CurrentCouldown2 -= Time.deltaTime;
             UpdateCouldownUI();
         }
         if (CurrentCouldown2 <= 0f)
         {
-            EndCouldown();
+            EndCouldown2();
         }
 
-        if (OnCouldown)
+        if (OnCouldown3)
         {
             CurrentCouldown3 -= Time.deltaTime;
             UpdateCouldownUI();
         }
         if (CurrentCouldown3 <= 0f)
         {
-            EndCouldown();
+            EndCouldown3();
         }
     }
 
     public void OnClickAbility1()
     {
-        if(!OnCouldown)
+        if(!OnCouldown1)
         {
-            StartCouldown();
+            StartCouldown1();
             Debug.Log("Кнопка и есть КД!");
         }
 
-        if (ChangeColorCoroutine != null)
-        {
-            Debug.Log("Корутина уже запущена!");
-            return;
-        }
+            Ability1.interactable = false;
 
         Debug.Log("Запускаем корутину");
         ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial1());
-
-
-        //if (!OnCouldown[0])
-        //{
-        //    StartCouldown(0);
-        //    Debug.Log("Кнопка и есть КД!");
-        //}
-
-        //if (ChangeColorCoroutine[0] != null)
-        //{
-        //    Debug.Log("Корутина уже запущена!");
-        //    return;
-        //}
-
-        //Debug.Log("Запускаем корутину");
-        //ChangeColorCoroutine[0] = StartCoroutine(ColorChangerMaterial(0));
     }
-
-
 
     public void OnClickAbility2()
     {
-        if (!OnCouldown)
+        if (!OnCouldown2)
         {
-            StartCouldown();
+            StartCouldown2();
             Debug.Log("Кнопка и есть КД!");
         }
 
-        if (ChangeColorCoroutine != null)
-        {
-            Debug.Log("Корутина уже запущена!");
-            return;
-        }
+            Ability2.interactable = false;
 
         Debug.Log("Запускаем корутину");
-        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial2());
-
-
-        //if (!OnCouldown[1])
-        //{
-        //    StartCouldown(1);
-        //    Debug.Log("Кнопка и есть КД!");
-        //}
-
-        //if (ChangeColorCoroutine[1] != null)
-        //{
-        //    Debug.Log("Корутина уже запущена!");
-        //    return;
-        //}
-
-        //Debug.Log("Запускаем корутину");
-        //ChangeColorCoroutine[1] = StartCoroutine(ColorChangerMaterial(1));
+        ChangeColorCoroutineBlack = StartCoroutine(ColorChangerMaterial2());
     }
 
     public void OnClickAbility3()
     {
-        if (!OnCouldown)
+        if (!OnCouldown3)
         {
-            StartCouldown();
+            StartCouldown3();
             Debug.Log("Кнопка и есть КД!");
         }
 
-        if (ChangeColorCoroutine != null)
-        {
-            Debug.Log("Корутина уже запущена!");
-            return;
-        }
+            Ability3.interactable = false;
 
         Debug.Log("Запускаем корутину");
-        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial3());
-
-        //if (!OnCouldown[2])
-        //{
-        //    StartCouldown(2);
-        //    Debug.Log("Кнопка и есть КД!");
-        //}
-
-        //if (ChangeColorCoroutine[2] != null)
-        //{
-        //    Debug.Log("Корутина уже запущена!");
-        //    return;
-        //}
-
-        //Debug.Log("Запускаем корутину");
-        //ChangeColorCoroutine[2] = StartCoroutine(ColorChangerMaterial(2));
+        ChangeColorCoroutineWhite = StartCoroutine(ColorChangerMaterial3());
     }
 
     private void UpdateCouldownUI()
@@ -268,37 +181,12 @@ public class AbilityScriptsUI : MonoBehaviour
             }
             TextCouldown3.text = Mathf.CeilToInt(CurrentCouldown3).ToString();
         }
-
-
-        //switch (AbilityIndex)
-        //{
-        //    case 0:
-        //        if (IconAbility1 != null && IconAbility1.type == Image.Type.Filled)
-        //            IconAbility1.fillAmount = currentCouldown[0] / TimerAbility1;
-        //        if (TextCouldown1 != null)
-        //            TextCouldown1.text = Mathf.CeilToInt(currentCouldown[0]).ToString();
-        //        break;
-        //    case 1:
-        //        if (IconAbility2 != null && IconAbility2.type == Image.Type.Filled)
-        //            IconAbility2.fillAmount = currentCouldown[1] / TimerAbility2;
-        //        if (TextCouldown2 != null)
-        //            TextCouldown2.text = Mathf.CeilToInt(currentCouldown[1]).ToString();
-        //        break;
-        //    case 2:
-        //        if (IconAbility3 != null && IconAbility3.type == Image.Type.Filled)
-        //            IconAbility3.fillAmount = currentCouldown[2] / TimerAbility3;
-        //        if (TextCouldown3 != null)
-        //            TextCouldown3.text = Mathf.CeilToInt(currentCouldown[2]).ToString();
-        //        break;
-        //}
     }
 
-    private void EndCouldown()
+    private void EndCouldown1()
     {
-        OnCouldown = false;
+        OnCouldown1 = false;
         CurrentCouldown1 = 0f;
-        CurrentCouldown2 = 0f;
-        CurrentCouldown3 = 0f;
 
         if (Ability1 != null)
         {
@@ -312,12 +200,12 @@ public class AbilityScriptsUI : MonoBehaviour
             TextCouldown1.gameObject.SetActive(false);
 
         Debug.Log("Перезарядка завершена!");
+    }
 
-
-        OnCouldown = false;
-        CurrentCouldown1 = 0f;
+    private void EndCouldown2()
+    {
+        OnCouldown2 = false;
         CurrentCouldown2 = 0f;
-        CurrentCouldown3 = 0f;
 
         if (Ability2 != null)
         {
@@ -331,10 +219,11 @@ public class AbilityScriptsUI : MonoBehaviour
             TextCouldown2.gameObject.SetActive(false);
 
         Debug.Log("Перезарядка завершена!");
+    }
 
-        OnCouldown = false;
-        CurrentCouldown1 = 0f;
-        CurrentCouldown2 = 0f;
+    private void EndCouldown3()
+    {
+        OnCouldown3 = false;
         CurrentCouldown3 = 0f;
 
         if (Ability3 != null)
@@ -351,34 +240,10 @@ public class AbilityScriptsUI : MonoBehaviour
         Debug.Log("Перезарядка завершена!");
     }
 
-    //private void EndCouldown(int AbilityIndex)
-    //{
-    //    OnCouldown[AbilityIndex] = false;
-    //    CurrentCouldown[AbilityIndex] = 0f;
-    //    SetAbilityUI(false, AbilityIndex);
-
-    //    switch (AbilityIndex)
-    //    {
-    //        case 0:
-    //            if (Ability1 != null) Ability1.interactable = true;
-    //            break;
-    //        case 1:
-    //            if (Ability2 != null) Ability2.interactable = true;
-    //            break;
-    //        case 2:
-    //            if (Ability3 != null) Ability3.interactable = true;
-    //            break;
-    //    }
-
-    //    Debug.Log($"Перезарядка способности {AbilityIndex + 1} завершена!");
-    //}
-
-    private void StartCouldown()
+    private void StartCouldown1()
     {
-        OnCouldown = true;
+        OnCouldown1 = true;
         CurrentCouldown1 = TimerAbility1;
-        CurrentCouldown2 = TimerAbility2;
-        CurrentCouldown3 = TimerAbility3;
 
         if (Ability1 != null)
         {
@@ -401,6 +266,12 @@ public class AbilityScriptsUI : MonoBehaviour
             TextCouldown1.gameObject.SetActive(true);
             TextCouldown1.text = TimerAbility1.ToString();
         }
+    }
+
+    private void StartCouldown2()
+    {
+        OnCouldown2 = true;
+        CurrentCouldown2 = TimerAbility2;
 
         if (Ability2 != null)
         {
@@ -423,12 +294,16 @@ public class AbilityScriptsUI : MonoBehaviour
             TextCouldown2.gameObject.SetActive(true);
             TextCouldown2.text = TimerAbility2.ToString();
         }
+    }
 
-        Debug.Log("Начата перезарядка: " + TimerAbility2 + " секунд");
+    private void StartCouldown3()
+    {
+        OnCouldown3 = true;
+        CurrentCouldown3 = TimerAbility3;
 
-        if (Ability2 != null)
+        if (Ability3 != null)
         {
-            Ability2.interactable = false;
+            Ability3.interactable = false;
         }
 
 
@@ -447,33 +322,7 @@ public class AbilityScriptsUI : MonoBehaviour
             TextCouldown3.gameObject.SetActive(true);
             TextCouldown3.text = TimerAbility3.ToString();
         }
-
-        Debug.Log("Начата перезарядка: " + TimerAbility3 + " секунд");
     }
-
-    //private void StartCouldown(int AbilityIndex)
-    //{
-    //    OnCouldown[AbilityIndex] = true;
-
-    //    switch (AbilityIndex)
-    //    {
-    //        case 0:
-    //            CurrentCouldown[0] = TimerAbility1;
-    //            if (Ability1 != null) Ability1.interactable = false;
-    //            break;
-    //        case 1:
-    //            CurrentCouldown[1] = TimerAbility2;
-    //            if (Ability2 != null) Ability2.interactable = false;
-    //            break;
-    //        case 2:
-    //            CurrentCouldown[2] = TimerAbility3;
-    //            if (Ability3 != null) Ability3.interactable = false;
-    //            break;
-    //    }
-
-    //    SetAbilityUI(true, AbilityIndex);
-    //    Debug.Log($"Начата перезарядка способности {AbilityIndex + 1}: {GetTimerForAbility(AbilityIndex)} секунд");
-    //}
 
     private IEnumerator ColorChangerMaterial1()
     {
@@ -499,11 +348,11 @@ public class AbilityScriptsUI : MonoBehaviour
 
         PlayerRender.material.color = CustomColor2;
 
-        yield return new WaitForSeconds(DurationCoroutineAbility1);
+        yield return new WaitForSeconds(DurationCoroutineAbility2);
 
         PlayerRender.material.color = originalColor;
 
-        ChangeColorCoroutine = null;
+        ChangeColorCoroutineBlack = null;
         Debug.Log("Корутина завершена");
     }
 
@@ -515,22 +364,34 @@ public class AbilityScriptsUI : MonoBehaviour
 
         PlayerRender.material.color = CustomColor3;
 
-        yield return new WaitForSeconds(DurationCoroutineAbility1);
+        yield return new WaitForSeconds(DurationCoroutineAbility3);
 
         PlayerRender.material.color = originalColor;
 
-        ChangeColorCoroutine = null;
+        ChangeColorCoroutineWhite = null;
         Debug.Log("Корутина завершена");
     }
 
-    public bool IsAbilityReady()
+    public bool IsAbilityReady(int AbilityNumber)
     {
-        return !OnCouldown;
+        switch (AbilityNumber)
+        {
+            case 1: return !OnCouldown1;
+            case 2: return !OnCouldown2;
+            case 3: return !OnCouldown3;
+            default: return false;
+        }
     }
 
-    public float GetRemainingCouldown()
+    public float GetRemainingCouldown(int AbilityNumber)
     {
-        return Math.Max(0f, CurrentCouldown1);
+        switch (AbilityNumber)
+        {
+            case 1: return Mathf.Max(0f, CurrentCouldown1);
+            case 2: return Mathf.Max(0f, CurrentCouldown2);
+            case 3: return Mathf.Max(0f, CurrentCouldown3);
+            default: return 0f;
+        }
     }
 
     #endregion ButtonAbility1-2-3

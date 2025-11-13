@@ -14,7 +14,9 @@ public class AbilityScriptsUI : MonoBehaviour
     public Button Ability3;
 
     [Header("ButtonSettings")]
-    public int TimerAbility = 5;
+    public int TimerAbility1 = 5;
+    public int TimerAbility2 = 15;
+    public int TimerAbility3 = 25;
     public Image IconAbility1;
     public Image IconAbility2;
     public Image IconAbility3;
@@ -24,33 +26,27 @@ public class AbilityScriptsUI : MonoBehaviour
 
     [Header("SettingsObject")]
     [SerializeField] private GameObject Player;
-    private Color DefaultColorPlayer;
     [SerializeField] private Renderer PlayerRender;
     private Coroutine ChangeColorCoroutine;
-    private Coroutine ChangeTransform;
 
     [Header("Ability1")]
     public float TimerDurationChange = 1f;
     public float DurationCoroutineAbility1 = 5f;
-    public Color CustomColor = Color.blue;
-
-    [Header("Ability2")]
-    [SerializeField] private Transform PlayerTransformTeleport;
-    public Vector3 teleportOffset = new Vector3(0, 0, 5);
-    public bool CustomDestination = false;
+    public Color CustomColor1 = Color.blue;
+    public Color CustomColor2 = Color.black;
+    public Color CustomColor3 = Color.white;
     public float DurationCoroutineAbility2 = 15f;
-    public bool useCustomDestination = false;
-    [SerializeField] private Transform TeleportDestination;
 
-
-    [Header("Ability3")]
 
 
     [Header("Couldown")]
     private bool OnCouldown = false;
-    private float CurrentCouldown = 0f;
-    private Vector3 OriginalPosition;
-    private bool IsTeleported;
+    private float CurrentCouldown1 = 0f;
+    private float CurrentCouldown2 = 0f;
+    private float CurrentCouldown3 = 0f;
+
+    //private bool[] onCouldown = new bool[3];
+    //private float[] currentCouldown = new float[3];
 
     #endregion Settings
 
@@ -59,31 +55,19 @@ public class AbilityScriptsUI : MonoBehaviour
     void Start()
     {
         if (Ability1 != null)
-        {
             Ability1.onClick.AddListener(OnClickAbility1);
-        }
         else
-        {
             Debug.LogError("Ability1 не назначена в инспекторе!");
-        }
 
         if (Ability2 != null)
-        {
             Ability2.onClick.AddListener(OnClickAbility2);
-        }
         else
-        {
             Debug.LogError("Ability2 не назначена в инспекторе!");
-        }
 
         if (Ability3 != null)
-        {
             Ability3.onClick.AddListener(OnClickAbility3);
-        }
         else
-        {
             Debug.LogError("Ability3 не назначена в инспекторе!");
-        }
 
         if (IconAbility3 != null)
             IconAbility3.gameObject.SetActive(false);
@@ -102,16 +86,52 @@ public class AbilityScriptsUI : MonoBehaviour
 
         if (TextCouldown3 != null)
             TextCouldown3.gameObject.SetActive(false);
+
+        //SetAbilityUI(false, 0);
+        //SetAbilityUI(false, 1);
+        //SetAbilityUI(false, 2);
+
     }
 
     void Update()
     {
-        if(OnCouldown)
-            {
-                CurrentCouldown -= Time.deltaTime;
-                UpdateCouldownUI();
-            }
-        if(CurrentCouldown <= 0f)
+        //for(int i = 0; i < 3 ; i++)
+        //    if (OnCouldown[i])
+        //    {
+        //        CurrentColdown[i] -= Time.deltaTime;
+        //        UpdateCouldownUI();
+        //    }
+        //if (CurrentCouldown1[i])
+        //{
+        //    EndCouldown(i);
+        //}
+
+        if (OnCouldown)
+        {
+            CurrentCouldown1 -= Time.deltaTime;
+            UpdateCouldownUI();
+        }
+        if (CurrentCouldown1 <= 0f)
+        {
+            EndCouldown();
+        }
+
+        if (OnCouldown)
+        {
+            CurrentCouldown2 -= Time.deltaTime;
+            UpdateCouldownUI();
+        }
+        if (CurrentCouldown2 <= 0f)
+        {
+            EndCouldown();
+        }
+
+        if (OnCouldown)
+        {
+            CurrentCouldown3 -= Time.deltaTime;
+            UpdateCouldownUI();
+        }
+        if (CurrentCouldown3 <= 0f)
         {
             EndCouldown();
         }
@@ -132,8 +152,26 @@ public class AbilityScriptsUI : MonoBehaviour
         }
 
         Debug.Log("Запускаем корутину");
-        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial());
+        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial1());
+
+
+        //if (!OnCouldown[0])
+        //{
+        //    StartCouldown(0);
+        //    Debug.Log("Кнопка и есть КД!");
+        //}
+
+        //if (ChangeColorCoroutine[0] != null)
+        //{
+        //    Debug.Log("Корутина уже запущена!");
+        //    return;
+        //}
+
+        //Debug.Log("Запускаем корутину");
+        //ChangeColorCoroutine[0] = StartCoroutine(ColorChangerMaterial(0));
     }
+
+
 
     public void OnClickAbility2()
     {
@@ -143,19 +181,63 @@ public class AbilityScriptsUI : MonoBehaviour
             Debug.Log("Кнопка и есть КД!");
         }
 
-        if (ChangeTransform != null)
+        if (ChangeColorCoroutine != null)
         {
             Debug.Log("Корутина уже запущена!");
             return;
         }
 
         Debug.Log("Запускаем корутину");
-        ChangeTransform = StartCoroutine(TeleportAbility());
+        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial2());
+
+
+        //if (!OnCouldown[1])
+        //{
+        //    StartCouldown(1);
+        //    Debug.Log("Кнопка и есть КД!");
+        //}
+
+        //if (ChangeColorCoroutine[1] != null)
+        //{
+        //    Debug.Log("Корутина уже запущена!");
+        //    return;
+        //}
+
+        //Debug.Log("Запускаем корутину");
+        //ChangeColorCoroutine[1] = StartCoroutine(ColorChangerMaterial(1));
     }
 
     public void OnClickAbility3()
     {
+        if (!OnCouldown)
+        {
+            StartCouldown();
+            Debug.Log("Кнопка и есть КД!");
+        }
 
+        if (ChangeColorCoroutine != null)
+        {
+            Debug.Log("Корутина уже запущена!");
+            return;
+        }
+
+        Debug.Log("Запускаем корутину");
+        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial3());
+
+        //if (!OnCouldown[2])
+        //{
+        //    StartCouldown(2);
+        //    Debug.Log("Кнопка и есть КД!");
+        //}
+
+        //if (ChangeColorCoroutine[2] != null)
+        //{
+        //    Debug.Log("Корутина уже запущена!");
+        //    return;
+        //}
+
+        //Debug.Log("Запускаем корутину");
+        //ChangeColorCoroutine[2] = StartCoroutine(ColorChangerMaterial(2));
     }
 
     private void UpdateCouldownUI()
@@ -164,36 +246,61 @@ public class AbilityScriptsUI : MonoBehaviour
         {
             if (IconAbility1 != null && IconAbility1.type == Image.Type.Filled)
             {
-                IconAbility1.fillAmount = CurrentCouldown / TimerAbility;
+                IconAbility1.fillAmount = CurrentCouldown1 / TimerAbility1;
             }
-            TextCouldown1.text = Mathf.CeilToInt(CurrentCouldown).ToString();
+            TextCouldown1.text = Mathf.CeilToInt(CurrentCouldown1).ToString();
         }
 
         if (IconAbility2 != null && TextCouldown2 != null)
         {
             if (IconAbility2 != null && IconAbility2.type == Image.Type.Filled)
             {
-                IconAbility2.fillAmount = CurrentCouldown / TimerAbility;
+                IconAbility2.fillAmount = CurrentCouldown2 / TimerAbility2;
             }
-            TextCouldown2.text = Mathf.CeilToInt(CurrentCouldown).ToString();
+            TextCouldown2.text = Mathf.CeilToInt(CurrentCouldown2).ToString();
         }
 
         if (IconAbility3 != null && TextCouldown3 != null)
         {
             if (IconAbility3 != null && IconAbility3.type == Image.Type.Filled)
             {
-                IconAbility3.fillAmount = CurrentCouldown / TimerAbility;
+                IconAbility3.fillAmount = CurrentCouldown3 / TimerAbility3;
             }
-            TextCouldown3.text = Mathf.CeilToInt(CurrentCouldown).ToString();
+            TextCouldown3.text = Mathf.CeilToInt(CurrentCouldown3).ToString();
         }
+
+
+        //switch (AbilityIndex)
+        //{
+        //    case 0:
+        //        if (IconAbility1 != null && IconAbility1.type == Image.Type.Filled)
+        //            IconAbility1.fillAmount = currentCouldown[0] / TimerAbility1;
+        //        if (TextCouldown1 != null)
+        //            TextCouldown1.text = Mathf.CeilToInt(currentCouldown[0]).ToString();
+        //        break;
+        //    case 1:
+        //        if (IconAbility2 != null && IconAbility2.type == Image.Type.Filled)
+        //            IconAbility2.fillAmount = currentCouldown[1] / TimerAbility2;
+        //        if (TextCouldown2 != null)
+        //            TextCouldown2.text = Mathf.CeilToInt(currentCouldown[1]).ToString();
+        //        break;
+        //    case 2:
+        //        if (IconAbility3 != null && IconAbility3.type == Image.Type.Filled)
+        //            IconAbility3.fillAmount = currentCouldown[2] / TimerAbility3;
+        //        if (TextCouldown3 != null)
+        //            TextCouldown3.text = Mathf.CeilToInt(currentCouldown[2]).ToString();
+        //        break;
+        //}
     }
 
     private void EndCouldown()
     {
         OnCouldown = false;
-        CurrentCouldown = 0f;
+        CurrentCouldown1 = 0f;
+        CurrentCouldown2 = 0f;
+        CurrentCouldown3 = 0f;
 
-        if(Ability1 != null)
+        if (Ability1 != null)
         {
             Ability1.interactable = true;
         }
@@ -208,7 +315,9 @@ public class AbilityScriptsUI : MonoBehaviour
 
 
         OnCouldown = false;
-        CurrentCouldown = 0f;
+        CurrentCouldown1 = 0f;
+        CurrentCouldown2 = 0f;
+        CurrentCouldown3 = 0f;
 
         if (Ability2 != null)
         {
@@ -224,7 +333,9 @@ public class AbilityScriptsUI : MonoBehaviour
         Debug.Log("Перезарядка завершена!");
 
         OnCouldown = false;
-        CurrentCouldown = 0f;
+        CurrentCouldown1 = 0f;
+        CurrentCouldown2 = 0f;
+        CurrentCouldown3 = 0f;
 
         if (Ability3 != null)
         {
@@ -240,10 +351,34 @@ public class AbilityScriptsUI : MonoBehaviour
         Debug.Log("Перезарядка завершена!");
     }
 
+    //private void EndCouldown(int AbilityIndex)
+    //{
+    //    OnCouldown[AbilityIndex] = false;
+    //    CurrentCouldown[AbilityIndex] = 0f;
+    //    SetAbilityUI(false, AbilityIndex);
+
+    //    switch (AbilityIndex)
+    //    {
+    //        case 0:
+    //            if (Ability1 != null) Ability1.interactable = true;
+    //            break;
+    //        case 1:
+    //            if (Ability2 != null) Ability2.interactable = true;
+    //            break;
+    //        case 2:
+    //            if (Ability3 != null) Ability3.interactable = true;
+    //            break;
+    //    }
+
+    //    Debug.Log($"Перезарядка способности {AbilityIndex + 1} завершена!");
+    //}
+
     private void StartCouldown()
     {
         OnCouldown = true;
-        CurrentCouldown = TimerAbility;
+        CurrentCouldown1 = TimerAbility1;
+        CurrentCouldown2 = TimerAbility2;
+        CurrentCouldown3 = TimerAbility3;
 
         if (Ability1 != null)
         {
@@ -264,7 +399,7 @@ public class AbilityScriptsUI : MonoBehaviour
         if (TextCouldown1 != null)
         {
             TextCouldown1.gameObject.SetActive(true);
-            TextCouldown1.text = TimerAbility.ToString();
+            TextCouldown1.text = TimerAbility1.ToString();
         }
 
         if (Ability2 != null)
@@ -286,10 +421,10 @@ public class AbilityScriptsUI : MonoBehaviour
         if (TextCouldown2 != null)
         {
             TextCouldown2.gameObject.SetActive(true);
-            TextCouldown2.text = TimerAbility.ToString();
+            TextCouldown2.text = TimerAbility2.ToString();
         }
 
-        Debug.Log("Начата перезарядка: " + TimerAbility + " секунд");
+        Debug.Log("Начата перезарядка: " + TimerAbility2 + " секунд");
 
         if (Ability2 != null)
         {
@@ -310,19 +445,43 @@ public class AbilityScriptsUI : MonoBehaviour
         if (TextCouldown3 != null)
         {
             TextCouldown3.gameObject.SetActive(true);
-            TextCouldown3.text = TimerAbility.ToString();
+            TextCouldown3.text = TimerAbility3.ToString();
         }
 
-        Debug.Log("Начата перезарядка: " + TimerAbility + " секунд");
+        Debug.Log("Начата перезарядка: " + TimerAbility3 + " секунд");
     }
 
-    private IEnumerator ColorChangerMaterial()
+    //private void StartCouldown(int AbilityIndex)
+    //{
+    //    OnCouldown[AbilityIndex] = true;
+
+    //    switch (AbilityIndex)
+    //    {
+    //        case 0:
+    //            CurrentCouldown[0] = TimerAbility1;
+    //            if (Ability1 != null) Ability1.interactable = false;
+    //            break;
+    //        case 1:
+    //            CurrentCouldown[1] = TimerAbility2;
+    //            if (Ability2 != null) Ability2.interactable = false;
+    //            break;
+    //        case 2:
+    //            CurrentCouldown[2] = TimerAbility3;
+    //            if (Ability3 != null) Ability3.interactable = false;
+    //            break;
+    //    }
+
+    //    SetAbilityUI(true, AbilityIndex);
+    //    Debug.Log($"Начата перезарядка способности {AbilityIndex + 1}: {GetTimerForAbility(AbilityIndex)} секунд");
+    //}
+
+    private IEnumerator ColorChangerMaterial1()
     {
         Debug.Log("Начата корутина");
 
         Color originalColor = PlayerRender.material.color;
 
-        PlayerRender.material.color = CustomColor;
+        PlayerRender.material.color = CustomColor1;
 
         yield return new WaitForSeconds(DurationCoroutineAbility1);
 
@@ -332,73 +491,37 @@ public class AbilityScriptsUI : MonoBehaviour
         Debug.Log("Корутина завершена");
     }
 
-    private IEnumerator TeleportAbility()
+    private IEnumerator ColorChangerMaterial2()
     {
-        Debug.Log("Начата телепортация");
+        Debug.Log("Начата корутина");
 
-        if(Player != null)
-        {
-            if(!IsTeleported)
-            {
-                OriginalPosition = Player.transform.position;
-            }
+        Color originalColor = PlayerRender.material.color;
 
-            TeleportPlayer();
+        PlayerRender.material.color = CustomColor2;
 
-            yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(DurationCoroutineAbility1);
 
-            IsTeleported = true;
-            Debug.Log("Игрок телепортирован");
-        }
-        else
-        {
-            Debug.Log("Player не назначен!");
-        }
+        PlayerRender.material.color = originalColor;
 
-        ChangeTransform = null;
+        ChangeColorCoroutine = null;
         Debug.Log("Корутина завершена");
     }
 
-    private void TeleportPlayer()
+    private IEnumerator ColorChangerMaterial3()
     {
-        if(Player != null)
-        {
-            if(useCustomDestination && TeleportDestination != null)
-            {
-                Player.transform.position = TeleportDestination.position;
-                Debug.Log("Телепортация в кастомную точку: " + TeleportDestination.position);
-            }
-            else
-            {
-                Vector3 teleportPosition = OriginalPosition + teleportOffset;
-                Player.transform.position = teleportPosition;
-                Debug.Log("Телепортация со смещением: " + teleportPosition);
-            }
-        }
-    }   
+        Debug.Log("Начата корутина");
 
-    private void ReturnToOriginalPose()
-    {
-        if(Player != null)
-        {
-            Player.transform.position = OriginalPosition;
-            IsTeleported = false;
-            Debug.Log("Игрок возвращен в исходную позицию: " + OriginalPosition);
-        }
+        Color originalColor = PlayerRender.material.color;
+
+        PlayerRender.material.color = CustomColor3;
+
+        yield return new WaitForSeconds(DurationCoroutineAbility1);
+
+        PlayerRender.material.color = originalColor;
+
+        ChangeColorCoroutine = null;
+        Debug.Log("Корутина завершена");
     }
-
-    public void ReturnOriginalPosition()
-    {
-        if(IsTeleported)
-        {
-            ReturnToOriginalPose();
-        }
-    }
-
-    public Vector3 GetOriginalPosition()
-    {
-        return OriginalPosition;
-    }    
 
     public bool IsAbilityReady()
     {
@@ -407,7 +530,7 @@ public class AbilityScriptsUI : MonoBehaviour
 
     public float GetRemainingCouldown()
     {
-        return Math.Max(0f, CurrentCouldown);
+        return Math.Max(0f, CurrentCouldown1);
     }
 
     #endregion ButtonAbility1-2-3

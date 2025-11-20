@@ -40,9 +40,6 @@ public class AbilityScriptsUI : MonoBehaviour
     public Color CustomColor2 = Color.green;
     public Color CustomColor3 = Color.white;
 
-
-
-
     [Header("Couldown")]
     private bool OnCouldown1 = false;
     private bool OnCouldown2 = false;

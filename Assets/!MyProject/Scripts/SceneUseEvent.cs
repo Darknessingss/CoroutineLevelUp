@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,7 +7,9 @@ using UnityEngine.UI;
 public class SceneUseEvent : MonoBehaviour
 {
 
-    private Button StartEventButton;
+    [Header("Кнопка")]
+    [SerializeField] private Button StartEventButton;
+    [SerializeField] private Button ChangeColorButton;
 
     [Header("Позиция спавна")]
     [SerializeField] private Transform SpawnPosition;
@@ -14,23 +18,25 @@ public class SceneUseEvent : MonoBehaviour
     [SerializeField] private GameObject Prefab1;
     [SerializeField] private GameObject Prefab2;
     [SerializeField] private GameObject Prefab3;
+    //[SerializeField] private Renderer Render1;
+    //[SerializeField] private Renderer Render2;
+    //[SerializeField] private Renderer Render3;
 
     [Header("Настройка спавна области")]
     [SerializeField] private float SpawnRadius = 3f;
 
+    [Header("Настройки кнопки")]
+    public Color CustomColor1 = Color.blue;
+    public Color CustomColor2 = Color.green;
+    public Color CustomColor3 = Color.white;
+    private Coroutine ChangeColorCoroutine;
+
+    public List<GameObject> PrefabSceneSpawned = new List<GameObject>();
+
 
     void Start()
     {
-
-        if(StartEventButton != null)
-        {
-            StartEventButton.onClick.AddListener(StartEventSystemes);
-            Debug.Log("Кнопка найдена, слушатель добавлен");
-        }
-        else
-        {
-            Debug.LogError("Кнопка не назначена в инспекторе!");
-        }
+        ChangeColorButton.interactable = false;
     }
 
     public void StartEventSystemes()
@@ -39,6 +45,7 @@ public class SceneUseEvent : MonoBehaviour
         {
             SpawnPrefabAll();
             StartEventButton.interactable = false;
+            ChangeColorButton.interactable = true;
         }
     }
 
@@ -56,15 +63,46 @@ public class SceneUseEvent : MonoBehaviour
         }
     }
 
+    public void ChangeColorObjects()
+    {
+        ChangeColorButton.interactable = false;
+
+        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial());
+    }
+
+    private IEnumerator ColorChangerMaterial()
+    {
+        List<Renderer> renderers = new List<Renderer>();
+
+        foreach (GameObject obj in PrefabSceneSpawned)
+        {
+            Renderer renderer = obj.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderers.Add(renderer);
+            }
+        }
+
+        if (renderers.Count >= 3)
+        {
+            renderers[0].material.color = CustomColor1;
+            renderers[1].material.color = CustomColor2;
+            renderers[2].material.color = CustomColor3;
+        }
+
+        yield return new WaitForSeconds(5f);
+
+        ChangeColorButton.interactable = true;
+        ChangeColorCoroutine = null;
+    }
+
+
     private Vector3 GetRandomPositionInRadius()
     {
         Vector2 RandomCircle = Random.insideUnitCircle * SpawnRadius;
         Vector3 RandomOffset = new Vector3(RandomCircle.x, 0f, RandomCircle.y);
         return SpawnPosition.position + RandomOffset;
     }   
-
-
-
 
     private void OnDestroy()
     {

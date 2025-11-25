@@ -8,107 +8,139 @@ public class SceneUseEvent : MonoBehaviour
 {
 
     [Header("Кнопка")]
-    [SerializeField] private Button StartEventButton;
-    [SerializeField] private Button ChangeColorButton;
+    [SerializeField] private Button _startEventButton;
+    [SerializeField] private Button _sortButton;
+    [SerializeField] private Button _PhysBallButton;
 
     [Header("Позиция спавна")]
-    [SerializeField] private Transform SpawnPosition;
+    [SerializeField] private Transform _spawnPosition;
+    [SerializeField] private Transform _spawnBall;
 
     [Header("Префабы")]
-    [SerializeField] private GameObject Prefab1;
-    [SerializeField] private GameObject Prefab2;
-    [SerializeField] private GameObject Prefab3;
-    //[SerializeField] private Renderer Render1;
-    //[SerializeField] private Renderer Render2;
-    //[SerializeField] private Renderer Render3;
+    [SerializeField] private GameObject _prefab1;
+    [SerializeField] private GameObject _prefab2;
+    [SerializeField] private GameObject _prefab3;
+    [SerializeField] private GameObject _physicBall;
 
     [Header("Настройка спавна области")]
-    [SerializeField] private float SpawnRadius = 3f;
+    [SerializeField] private float _spawnRadius = 3f;
+    [SerializeField] private float _spacing = 2f;
+    [SerializeField] private float _speedBall = 2f;
 
-    [Header("Настройки кнопки")]
-    public Color CustomColor1 = Color.blue;
-    public Color CustomColor2 = Color.green;
-    public Color CustomColor3 = Color.white;
-    private Coroutine ChangeColorCoroutine;
+    [Header("Настройки Шара")]
+    [SerializeField] private Rigidbody _rbBall;
+    [SerializeField] private Renderer _renderBall;
+    [SerializeField] private Color _originalColor;
+    [SerializeField] private float _slowSpeedTimer = 0f;
+    private bool _isBelow = false;
+    [SerializeField] private Color _slowColor = Color.red;
+    [SerializeField] private Color _normalColor = Color.green;
 
-    public List<GameObject> PrefabSceneSpawned = new List<GameObject>();
 
 
     void Start()
     {
-        ChangeColorButton.interactable = false;
+
     }
 
-    public void StartEventSystemes()
+    private void FixedUpdate()
     {
-        if (SpawnPosition != null)
+        
+    }
+    public void SortCubeScale()
+    {
+        GameObject[] PrefabScale = GameObject.FindGameObjectsWithTag("Prefabers");
+
+        BubbleSortPrefabScale(PrefabScale);
+
+        ArrangeCubesInLine(PrefabScale);
+
+        _sortButton.interactable = false;
+    }
+    private void BubbleSortPrefabScale(GameObject[] PrefabScale)
+    {
+        int n = PrefabScale.Length;
+        for (int i = 0; i < n - 1; i++)
         {
-            SpawnPrefabAll();
-            StartEventButton.interactable = false;
-            ChangeColorButton.interactable = true;
+            for (int j = 0; j < n - i - 1; j++)
+            {
+                float scale1 = PrefabScale[j].transform.localScale.x;
+                float scale2 = PrefabScale[j + 1].transform.localScale.x;
+
+                if (scale1 > scale2)
+                {
+                    GameObject Pref = PrefabScale[j];
+                    PrefabScale[j] = PrefabScale[j + 1];
+                    PrefabScale[j + 1] = Pref;
+                }
+            }
         }
     }
-
-    public void SpawnPrefabAll()
+    private void ArrangeCubesInLine(GameObject[] PrefabScale)
     {
-        GameObject[] AllPrefabs = { Prefab1, Prefab2, Prefab3 };
+        Vector3 startPosition = _spawnPosition.position;
 
-        foreach(GameObject Prefab in AllPrefabs)
+        for (int i = 0; i < PrefabScale.Length; i++)
         {
-            if(Prefab != null)
+            float offset = i * _spacing;
+            Vector3 newPosition = startPosition + Vector3.right * offset;
+
+            PrefabScale[i].transform.position = newPosition;
+        }
+    }
+    public void StartSpawnPrefabs()
+    {
+        if (_spawnPosition != null)
+        {
+            SpawnPrefabAll();
+            _startEventButton.interactable = false;
+        }
+    }
+    private void SpawnPrefabAll()
+    {
+        GameObject[] AllPrefabs = { _prefab1, _prefab2, _prefab3 };
+
+        foreach (GameObject Prefab in AllPrefabs)
+        {
+            if (Prefab != null)
             {
                 Vector3 RandomPositionSpawn = GetRandomPositionInRadius();
                 Instantiate(Prefab, RandomPositionSpawn, Quaternion.identity);
             }
         }
     }
-
-    public void ChangeColorObjects()
+    public void SpawnPhysBall()
     {
-        ChangeColorButton.interactable = false;
-
-        ChangeColorCoroutine = StartCoroutine(ColorChangerMaterial());
+        if (_spawnBall != null)
+            SpawnBall();
+                _PhysBallButton.interactable = false;
     }
-
-    private IEnumerator ColorChangerMaterial()
+    private void SpawnBall()
     {
-        List<Renderer> renderers = new List<Renderer>();
-
-        foreach (GameObject obj in PrefabSceneSpawned)
-        {
-            Renderer renderer = obj.GetComponent<Renderer>();
-            if (renderer != null)
-            {
-                renderers.Add(renderer);
-            }
-        }
-
-        if (renderers.Count >= 3)
-        {
-            renderers[0].material.color = CustomColor1;
-            renderers[1].material.color = CustomColor2;
-            renderers[2].material.color = CustomColor3;
-        }
-
-        yield return new WaitForSeconds(5f);
-
-        ChangeColorButton.interactable = true;
-        ChangeColorCoroutine = null;
+        Vector3 SpawnBallPosition = _spawnBall.position;
+        Instantiate(_physicBall, SpawnBallPosition, Quaternion.identity);
     }
-
-
     private Vector3 GetRandomPositionInRadius()
     {
-        Vector2 RandomCircle = Random.insideUnitCircle * SpawnRadius;
+        Vector2 RandomCircle = Random.insideUnitCircle * _spawnRadius;
         Vector3 RandomOffset = new Vector3(RandomCircle.x, 0f, RandomCircle.y);
-        return SpawnPosition.position + RandomOffset;
+        return _spawnPosition.position + RandomOffset;
     }   
-
     private void OnDestroy()
     {
-        if(StartEventButton != null)
+        if (_sortButton != null)
         {
-            StartEventButton.onClick.RemoveListener(StartEventSystemes);
+            _sortButton.onClick.RemoveListener(SortCubeScale);
+        }
+
+        if (_startEventButton != null)
+        {
+            _startEventButton.onClick.RemoveListener(StartSpawnPrefabs);
+        }
+
+        if (_PhysBallButton != null)
+        {
+            _PhysBallButton.onClick.RemoveListener(SpawnPhysBall);
         }
     }
 }

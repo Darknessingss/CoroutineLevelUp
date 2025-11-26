@@ -7,46 +7,25 @@ using UnityEngine.UI;
 public class SceneUseEvent : MonoBehaviour
 {
 
-    [Header("Кнопка")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅ")]
     [SerializeField] private Button _startEventButton;
     [SerializeField] private Button _sortButton;
     [SerializeField] private Button _PhysBallButton;
 
-    [Header("Позиция спавна")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ")]
     [SerializeField] private Transform _spawnPosition;
     [SerializeField] private Transform _spawnBall;
 
-    [Header("Префабы")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
     [SerializeField] private GameObject _prefab1;
     [SerializeField] private GameObject _prefab2;
     [SerializeField] private GameObject _prefab3;
     [SerializeField] private GameObject _physicBall;
 
-    [Header("Настройка спавна области")]
+    [Header("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ")]
     [SerializeField] private float _spawnRadius = 3f;
     [SerializeField] private float _spacing = 2f;
-    [SerializeField] private float _speedBall = 2f;
 
-    [Header("Настройки Шара")]
-    [SerializeField] private Rigidbody _rbBall;
-    [SerializeField] private Renderer _renderBall;
-    [SerializeField] private Color _originalColor;
-    [SerializeField] private float _slowSpeedTimer = 0f;
-    private bool _isBelow = false;
-    [SerializeField] private Color _slowColor = Color.red;
-    [SerializeField] private Color _normalColor = Color.green;
-
-
-
-    void Start()
-    {
-
-    }
-
-    private void FixedUpdate()
-    {
-        
-    }
     public void SortCubeScale()
     {
         GameObject[] PrefabScale = GameObject.FindGameObjectsWithTag("Prefabers");
@@ -126,22 +105,5 @@ public class SceneUseEvent : MonoBehaviour
         Vector3 RandomOffset = new Vector3(RandomCircle.x, 0f, RandomCircle.y);
         return _spawnPosition.position + RandomOffset;
     }   
-    private void OnDestroy()
-    {
-        if (_sortButton != null)
-        {
-            _sortButton.onClick.RemoveListener(SortCubeScale);
-        }
-
-        if (_startEventButton != null)
-        {
-            _startEventButton.onClick.RemoveListener(StartSpawnPrefabs);
-        }
-
-        if (_PhysBallButton != null)
-        {
-            _PhysBallButton.onClick.RemoveListener(SpawnPhysBall);
-        }
-    }
 }
     

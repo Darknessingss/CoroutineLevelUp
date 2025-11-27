@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,7 @@ public class SceneUseEvent : MonoBehaviour
     [SerializeField] private Button _startEventButton;
     [SerializeField] private Button _sortButton;
     [SerializeField] private Button _PhysBallButton;
+    [SerializeField] private Button _HealthDestroyObject;
 
     [Header("������� ������")]
     [SerializeField] private Transform _spawnPosition;
@@ -25,6 +27,60 @@ public class SceneUseEvent : MonoBehaviour
     [Header("��������� ������ �������")]
     [SerializeField] private float _spawnRadius = 3f;
     [SerializeField] private float _spacing = 2f;
+
+
+    public void DestroyObjectHealth()
+    {
+        GameObject[] PrefabersHealth = GameObject.FindGameObjectsWithTag("Prefabers");
+
+        _HealthDestroyObject.interactable = false;
+
+        foreach (GameObject PrefHealth in PrefabersHealth)
+        {
+            TMP_Text[] textComponents = PrefHealth.GetComponentsInChildren<TMP_Text>();
+
+            foreach (TMP_Text text in textComponents)
+            {
+                if (text.name == "HealthText1" || text.name == "HealthText2" || text.name == "HealthText3")
+                {
+                    if (TryParseHealth(text.text, out int health))
+                    {
+                        if (health < 50)
+                        {
+                            Destroy(PrefHealth);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private bool TryParseHealth(string healthText, out int health)
+    {
+        health = 0;
+
+        if (string.IsNullOrEmpty(healthText))
+            return false;
+
+        string cleanText = healthText.Trim();
+
+        if (cleanText.Contains("/"))
+        {
+            string[] parts = cleanText.Split('/');
+            if (parts.Length > 0 && int.TryParse(parts[0].Trim(), out health))
+            {
+                return true;
+            }
+        }
+
+        if (int.TryParse(cleanText, out health))
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     public void SortCubeScale()
     {

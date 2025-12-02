@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BulletController : MonoBehaviour
@@ -15,6 +16,10 @@ public class BulletController : MonoBehaviour
         if (collision.gameObject.CompareTag("Destroyable"))
         {
             Destroy(gameObject);
+        }
+        if (collision.gameObject.CompareTag("Destroyable"))
+        {
+            Destroy(collision.gameObject, 2);
         }
     }
 }

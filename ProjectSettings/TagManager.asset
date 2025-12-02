@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Prefabers
+  - Destroyable
+  - Ground
   layers:
   - Default
   - TransparentFX

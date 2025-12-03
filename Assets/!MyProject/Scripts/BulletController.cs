@@ -19,7 +19,7 @@ public class BulletController : MonoBehaviour
         }
         if (collision.gameObject.CompareTag("Destroyable"))
         {
-            Destroy(collision.gameObject, 2);
+            Destroy(collision.gameObject);
         }
     }
 }

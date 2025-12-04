@@ -8,9 +8,33 @@ public class AnimController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            animator.GetBool("Anim_Run_Left");
+            animator.SetBool("AnimRun1", true);
+        }
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            animator.SetBool("AnimRun1", false);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            animator.SetBool("AnimRun2", true);
+        }
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            animator.SetBool("AnimRun2", false);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            animator.SetBool("AnimRun3", true);
+        }
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            animator.SetBool("AnimRun3", false);
         }
     }
 }

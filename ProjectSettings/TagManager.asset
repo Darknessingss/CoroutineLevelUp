@@ -7,6 +7,7 @@ TagManager:
   - Prefabers
   - Destroyable
   - Ground
+  - Gun
   layers:
   - Default
   - TransparentFX

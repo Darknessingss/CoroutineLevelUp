@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MovementHero : MonoBehaviour
 {
@@ -50,10 +51,6 @@ public class MovementHero : MonoBehaviour
     {
         rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
 
-        if (moveInput > 0)
-            spriteRenderer.flipX = false;
-        else if (moveInput < 0)
-            spriteRenderer.flipX = true;
     }
 
     private void OnCollisionEnter2D(Collision2D col)
@@ -61,6 +58,19 @@ public class MovementHero : MonoBehaviour
         if (col.collider.CompareTag("Ground"))
         {
             onGround = true;
+        }
+
+        if (col.collider.CompareTag("Die"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Die"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

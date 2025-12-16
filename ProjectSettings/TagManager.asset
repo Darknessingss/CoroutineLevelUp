@@ -8,6 +8,11 @@ TagManager:
   - Destroyable
   - Ground
   - Gun
+  - Stack
+  - Chest
+  - BaseBuyer
+  - Die
+  - Wind
   layers:
   - Default
   - TransparentFX
